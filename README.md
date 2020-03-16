@@ -1,81 +1,49 @@
 # Collaborative-Distillation
-Official PyTorch code for our CVPR-20 paper "Collaborative Distillation for Ultra-Resolution Universal Style Transfer". TLDR: We propose a new knowledge distillation method to reduce CNN filters, and thus realize ultra-resolution style transfer of universal styles.
-
-# Environment
-
-
-# Test
+Official PyTorch code for our CVPR-20 paper "Collaborative Distillation for Ultra-Resolution Universal Style Transfer". 
+> TL'DR: We propose a new knowledge distillation method to reduce CNN filters, realizing the ultra-resolution universal style transfer on a single 12GB GPU.
+<center><img src="UHD_stylized.jpg" width="1000" hspace="10"></center>
 
 
-# Train
-
-
-# A
-
-
-
-## Universal Style Transfer
-
-This is the Pytorch implementation of [Universal Style Transfer via Feature Transforms](https://arxiv.org/pdf/1705.08086.pdf).
-
-Official Torch implementation can be found [here](https://github.com/Yijunmaverick/UniversalStyleTransfer) and Tensorflow implementation can be found [here](https://github.com/eridgd/WCT-TF).
-
-## Prerequisites
-- Python 3.5
-- [Pytorch 0.4.1](http://pytorch.org/)
-- [torchvision](https://github.com/pytorch/vision)
-- Pretrained encoder and decoder [models](https://drive.google.com/file/d/1REga1z1rKezQtBebIZ86_iNR-mxum-KB/view?usp=sharing) for image reconstruction only (download and uncompress them under `models/`)
-- For ultra-resolution style transfer, we use the slimmed VGG-19. The models are already in the `models/16x_models`.
+## Environment
+- python==3.5
+- pytorch==0.4.1
+- torchvision
 - CUDA + CuDNN
 
-## Prepare images
-1. low-resolution images
+## Test (style transfer)
+Step 1: Prepare images
 
-Simply put content and image pairs in `images/content` and `images/style` respectively.
+Step 2: Prepare models
+- Download our trained encoder and decoder [models](https://drive.google.com/file/d/1REga1z1rKezQtBebIZ86_iNR-mxum-KB/view?usp=sharing) for image reconstruction only (download and uncompress them under `models/`)
+- For ultra-resolution style transfer, we use the slimmed VGG-19. The models are already in the `models/16x_models`.
 
-2. ultra-resolution images
-
-Simply put content and image pairs in `images/UHD_content` and `images/UHD_style` respectively.
-
-
-## Style Transfer
-Explanation of some important args:
-
-`-m` or `--mode`
-- if not provided (default `None`), use the original VGG-19 models (which can test images in up to about 3000x3000 pixels).
-- if `--mode 16x`, use the slimmed 16x models (which can test ultra-resolution images).
-
-`--debug`
-- if not provided, i.e., not debugging, then the log will be printed into a txt file in `samples`.
-- if `--debug`, then the log will be printed on screen.
-
-Style transfer on low-resolution images.
+Step 3: Stylization
 ```
 python WCT.py --cuda --gpu 0 --debug # use original VGG-19
 python WCT.py --cuda --gpu 0 --debug  -m 16x # use slimmed VGG-19
 ```
 
-Style transfer on ultra-resolution images. This will generate all the combination pairs with content in `UHD_content` and style in `UHD_style`. Say, if there are 5 contents and 4 styles, there will be 5x4=20 pairs of stylized images.
-```
-python WCT.py --cuda --gpu 0 --UHD  --debug  -m 16x
-```
-
-If you only want to test specific one content or style, use the `picked_content_mark` and `picked_style_mark`. This will filter out all the images only containing the field (`picked_content_mark`, `picked_style_mark`) in their names.
-```
-python WCT.py --cuda --gpu 0 --UHD  --debug  -m 16x  --picked_content_mark "green_park"  --picked_style_mark "Vincent"
-```
-
-Note: The default GPU id is 0, if you want to change the GPU id, change this line `os.environ["CUDA_VISIBLE_DEVICES"] = "0"` in `WCT.py`.
+## Train (model compressiom)
+> TODO
 
 ## Results
-<img src="images/UHD_style/Vincent_2K.png" width="400" hspace="10">
+<img src="style/UHD/Vincent_2K.png" width="400" hspace="10">
 
-<img src="images/UHD_content/green_park-wallpaper-3840x2160.jpg" width="400" hspace="10">
+<img src="content/UHD/green_park-wallpaper-3840x2160.jpg" width="400" hspace="10">
 
-<img src="samples/20181122-1715_1_green_park-wallpaper-3840x2160+Vincent_2K.jpg" width="400" hspace="10">
+<img src="stylized_results/20181122-1715_1_green_park-wallpaper-3840x2160+Vincent_2K.jpg" width="400" hspace="10">
+
+More results can be found in our supplementary material.
 
 ### Acknowledgments
-- Many thanks to the author of WCT Yijun Li for his kind help. 
-- This code is initially based on Xueting Li's [implementation](https://github.com/sunshineatnoon/PytorchWCT). Many thanks to her!
+In this code we refers to the following implementations: [PytorchWCT](https://github.com/sunshineatnoon/PytorchWCT), [pytorch-AdaIN](https://github.com/naoto0804/pytorch-AdaIN), [AdaIN-style](https://github.com/xunhuang1995/AdaIN-style). Great thanks to them!
 
 ### Reference
+Please cite this in your publications if the code helps your research:
+
+    @inproceedings{wang2020collaborative,
+      Author = {Wang, Huan and Li, Yijun and Wang, Yuehai and Hu, Haoji and Yang, Ming-Hsuan},
+      Title = {Collaborative Distillation for Ultra-Resolution Universal Style Transfer},
+      Booktitle = {CVPR},
+      Year = {2020}
+    }
