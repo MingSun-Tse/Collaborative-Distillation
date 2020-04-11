@@ -1,8 +1,9 @@
+The code is being prepared, which will be updated soon. (04/11/2020)
+
 # Collaborative-Distillation
 Official PyTorch code for our CVPR-20 paper "Collaborative Distillation for Ultra-Resolution Universal Style Transfer". 
 > TL'DR: We propose a new knowledge distillation method to reduce CNN filters, realizing the ultra-resolution universal style transfer on a single 12GB GPU.
 <center><img src="UHD_stylized.jpg" width="1000" hspace="10"></center>
-
 
 ## Environment
 - python==3.5
