@@ -41,7 +41,7 @@ CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x --UHD
 CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x --UHD --content_size 3000 --style_size 2000
 ```
 
-In default, the above scripts will test all possible content-style combinations (i.e., for 3 contents with 4 styles, there will be 3x4 stylzed results). If you only want to test a specific pair, say, content "green_park-wallpaper-3840x2160.jpg" with style "Vincent_2K.jpg",  you can use the option `--picked_content_mark` and `--picked_style_mark` to select specific pairs. E.g., the following will only choose the content whose name includes "green_park" and the style whose name includes "Vincent".
+In default, the above scripts will test all possible content-style combinations (i.e., for 3 contents with 4 styles, there will be 3x4 stylized results). If you only want to test a specific pair, say, content "green_park-wallpaper-3840x2160.jpg" with style "Vincent_2K.jpg",  you can use the option `--picked_content_mark` and `--picked_style_mark` to select specific pairs. E.g., the following will only choose the content whose name includes "green_park" and the style whose name includes "Vincent".
 ```
 CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x --UHD --picked_content_mark green_park --picked_style_mark Vincent
 ```
@@ -73,11 +73,11 @@ CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_se --pretrained_init --screen -
 **Step 4: Train the corresponding decoders**
 
 ```
-CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_percep 0.01 --stage 5 -p wct_sd_stage5 --SE <SE path>
-CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_percep 0.01 --stage 4 -p wct_sd_stage4 --SE <SE path>
-CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_percep 0.01 --stage 3 -p wct_sd_stage3 --SE <SE path>
-CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_percep 0.01 --stage 2 -p wct_sd_stage2 --SE <SE path>
-CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_percep 0.01 --stage 1 -p wct_sd_stage1 --SE <SE path>
+CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_perc 0.01 --stage 5 -p wct_sd_stage5 --SE <SE path>
+CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_perc 0.01 --stage 4 -p wct_sd_stage4 --SE <SE path>
+CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_perc 0.01 --stage 3 -p wct_sd_stage3 --SE <SE path>
+CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_perc 0.01 --stage 2 -p wct_sd_stage2 --SE <SE path>
+CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_perc 0.01 --stage 1 -p wct_sd_stage1 --SE <SE path>
 ```
 - `<SE path>` is to specify the small encoder model trained in Step 3. A path example for stage5 is `Experiments/*wct_se_stage5*/weights/*.pth`
 
