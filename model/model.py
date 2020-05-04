@@ -36,9 +36,9 @@ class TrainSE_With_WCTDecoder(nn.Module):
 class TrainSD_With_WCTSE(nn.Module):
   def __init__(self, args):
     super(TrainSD_With_WCTSE, self).__init__()
-    self.BE = eval("Encoder%d" % args.stage)(args.BE, fixed=True) 
-    self.SE = eval("SmallEncoder%d_%dx_aux" % (args.stage, args.speedup))(args.SE, fixed=True)
-    self.SD = eval("SmallDecoder%d_%dx" % (args.stage, args.speedup))(args.SD, fixed=False)
+    self.BE = eval("model_original.Encoder%d" % args.stage)(args.BE, fixed=True) 
+    self.SE = eval("model_cd.SmallEncoder%d_%dx_aux" % (args.stage, args.speedup))(args.SE, fixed=True)
+    self.SD = eval("model_cd.SmallDecoder%d_%dx" % (args.stage, args.speedup))(args.SD, fixed=False)
     self.args = args
     
   def forward(self, c, iter):

@@ -1,3 +1,6 @@
 *.pth
 *.pt
 *.t7
+*.jpg
+*.png
+*.pyc
