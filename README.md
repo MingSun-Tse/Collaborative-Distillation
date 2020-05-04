@@ -23,7 +23,7 @@ Official PyTorch code for our CVPR-20 poster paper "[Collaborative Distillation 
 
 **Step 3: Stylization**
 
-Under the `PytorchWCT` folder, please run the following scripts. The stylized results will be saved in `PytorchWCT/stylized_results`.
+- Under the `PytorchWCT` folder, please run the following scripts. The stylized results will be saved in `PytorchWCT/stylized_results`.
 ```
 # use original VGG-19, normal images
 CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode original
@@ -37,8 +37,8 @@ CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x
 # use our pruned VGG-19, ultra-res images
 CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x --UHD
 
-# if your gpu ram cannot afford some very large content, try to test at a lower resolution, say
-CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x --UHD --content_size 3000
+# you can change the content and style size via '--content_size' and '--style_size'
+CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x --UHD --content_size 3000 --style_size 2000
 ```
 
 In default, the above scripts will test all possible content-style combinations (i.e., for 3 contents with 4 styles, there will be 3x4 stylzed results). If you only want to test a specific pair, say, content "green_park-wallpaper-3840x2160.jpg" with style "Vincent_2K.jpg",  you can use the option `--picked_content_mark` and `--picked_style_mark` to select specific pairs. E.g., the following will only choose the content whose name includes "green_park" and the style whose name includes "Vincent".
@@ -53,7 +53,8 @@ CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x --UHD --picked_content_m
 Download the [MS-COCO 2014 training set](http://cocodataset.org/#download) and unzip it at path `data/COCO/train2014`.
 
 **Step 2: Prepare models**
-- For training the SE (i.e., small encoder), we need the original decoder (a.k.a. big decoder or BD). We trained our own BD following the WCT paper. You can download them from [this google drive](https://drive.google.com/drive/folders/1qo2dv9bKJxS8xiThzp-PFe7ClHWS3Lhx?usp=sharing) and put them at path `trained_models/our_BD`.
+
+For training the SE (small encoder), we need the original decoder (big decoder or BD). We trained our own BD following the [WCT paper](https://papers.nips.cc/paper/6642-universal-style-transfer-via-feature-transforms.pdf). You can download them from [this google drive](https://drive.google.com/drive/folders/1qo2dv9bKJxS8xiThzp-PFe7ClHWS3Lhx?usp=sharing) and put them at path `trained_models/our_BD`.
 
 
 **Step 3: Train the compressed encoders**
@@ -67,7 +68,7 @@ CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_se --pretrained_init --screen -
 CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_se --pretrained_init --screen --stage 1 -p wct_se_stage1
 ```
 - The log and trained models will be saved in a new-built project folder under `Experiments`.
-- `--base` is to specify the base models we employ for weight initialization to accelerate training, which are obtained by pruning the filters of the least L1-norms (see also [2017-ICLR-Filter Pruning](https://openreview.net/pdf?id=rJqFGTslg))
+- `--pretrained_init` is to indicate using base models for initialization, which are obtained by pruning the filters with the least L1-norms (see also [2017-ICLR-Filter Pruning](https://openreview.net/pdf?id=rJqFGTslg))
 
 **Step 4: Train the corresponding decoders**
 
@@ -78,7 +79,7 @@ CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen -
 CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_percep 0.01 --stage 2 -p wct_sd_stage2 --SE <SE path>
 CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_percep 0.01 --stage 1 -p wct_sd_stage1 --SE <SE path>
 ```
-- `<SE path>` is to specify the small encoder model trained in Step 2. A path example for stage5 is 'Experiments/*wct_se_stage5*/weights/*.pth'
+- `<SE path>` is to specify the small encoder model trained in Step 2. A path example for stage5 is `Experiments/*wct_se_stage5*/weights/*.pth`
 
 ## Results
 <center><img src="PytorchWCT/style/UHD_style/Vincent_2K.png" width="400" hspace="10"></center>

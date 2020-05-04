@@ -18,9 +18,10 @@ def default_loader(path):
     return Image.open(path).convert('RGB')
 
 class Dataset(data.Dataset):
-    def __init__(self, contentPath, stylePath, texturePath, fineSize, picked_content_mark=".", picked_style_mark=".", synthesis=False):
+    def __init__(self, contentPath, stylePath, texturePath, c_size=0, s_size=0, picked_content_mark=".", picked_style_mark=".", synthesis=False):
       super(Dataset,self).__init__()
-      self.fineSize = fineSize
+      self.content_size = c_size
+      self.style_size = s_size
       self.synthesis = synthesis
       if synthesis:
         self.texturePath = texturePath
@@ -29,7 +30,7 @@ class Dataset(data.Dataset):
         self.contentPath = contentPath
         self.stylePath   = stylePath
         content_imgs = [x for x in listdir(contentPath) if is_image_file(x) and picked_content_mark in x]
-        style_imgs =   [x for x in listdir(stylePath)   if is_image_file(x) and picked_style_mark   in x]
+        style_imgs   = [x for x in listdir(stylePath)   if is_image_file(x) and picked_style_mark   in x]
         pairs = [[c, s] for c in content_imgs for s in style_imgs]
         self.content_image_list = list(np.array(pairs)[:, 0])
         self.style_image_list   = list(np.array(pairs)[:, 1])
@@ -45,12 +46,13 @@ class Dataset(data.Dataset):
     def __getitem__(self, index):
       if not self.synthesis: # style transfer
         contentImgPath = os.path.join(self.contentPath, self.content_image_list[index])
-        styleImgPath   = os.path.join(self.stylePath, self.style_image_list[index])
+        styleImgPath = os.path.join(self.stylePath, self.style_image_list[index])
         contentImg = default_loader(contentImgPath)
-        styleImg   = default_loader(styleImgPath)
-        if self.fineSize != 0:
-          contentImg = contentImg.resize((self.fineSize, self.fineSize)) # if using fine size, it may well be testing, so use square image.
-          styleImg   = styleImg.resize((self.fineSize, self.fineSize))
+        styleImg = default_loader(styleImgPath)
+        if self.content_size:
+          contentImg = contentImg.resize(self.content_size)
+        if self.style_size:
+          styleImg = styleImg.resize(self.style_size)
         contentImg = transforms.ToTensor()(contentImg)
         styleImg   = transforms.ToTensor()(styleImg)
         return contentImg.squeeze(0), styleImg.squeeze(0), \
@@ -59,20 +61,19 @@ class Dataset(data.Dataset):
       else: # texture synthesis
         textureImgPath = os.path.join(self.texturePath, self.texture_image_list[index])
         textureImg = default_loader(textureImgPath)
-        if self.fineSize != 0:
+        if self.style_size:
           w, h = textureImg.size
           if w > h:
-            neww = self.fineSize
+            neww = self.style_size
             newh = int(h * neww / w)
           else:
-            newh = self.fineSize
+            newh = self.style_size
             neww = int(w * newh / h)
           textureImg = textureImg.resize((neww,newh))
         w, h = textureImg.size
-        contentImg = torch.rand([3, 3000, int(3000.0/h*w)]) # uniform noise (range [0,1]) with the same dimension as texture image
+        contentImg = torch.rand_like(textureImg)
         textureImg = transforms.ToTensor()(textureImg)
         return contentImg.squeeze(0), textureImg.squeeze(0), self.texture_image_list[index].split(".")[0] + ".jpg"
 
     def __len__(self):
-        # You should change 0 to the total size of your dataset.
         return len(self.texture_image_list) if self.synthesis else len(self.content_image_list)

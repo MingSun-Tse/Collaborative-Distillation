@@ -21,10 +21,11 @@ parser.add_argument('--texturePath', type=str, default='style/texture')
 parser.add_argument('--outf', type=str, default='stylized_results', help='folder to output images')
 parser.add_argument('--picked_content_mark', type=str, default=".")
 parser.add_argument('--picked_style_mark', type=str, default=".")
-parser.add_argument('--mode', type=str, help="to choose different trained models", default=None, choices=['original', '16x', 'fp16x', '16x_kd2sd'])
+parser.add_argument('--mode', type=str, help="to choose different trained models", default=None, choices=['original', '16x', '16x_kd2sd'])
 parser.add_argument('--UHD', action='store_true', help="if use the UHD images")
 parser.add_argument('--synthesis', action="store_true", help="for style synthesis")
-parser.add_argument('--fineSize', type=int, default=0, help='resize both content and style to fineSize x fineSize, leave it to 0 if not resize')
+parser.add_argument('--content_size', type=int, default=0, help='resize content, leave it to 0 if not resize')
+parser.add_argument('--style_size', type=int, default=0, help='resize style, leave it to 0 if not resize')
 parser.add_argument('--alpha', type=float,default=1, help='hyperparameter to blend wct feature and content feature')
 parser.add_argument('--log_mark', type=str, default=time.strftime("%Y%m%d-%H%M") )
 parser.add_argument('--num_run', type=int, default=1, help="you can run WCT for multiple times")
@@ -86,7 +87,8 @@ logprinter(args._get_kwargs())
 # Set up data
 contentPath = args.UHD_contentPath if args.UHD else args.contentPath
 stylePath = args.UHD_stylePath if args.UHD else args.stylePath
-dataset = Dataset(contentPath, stylePath, args.texturePath, args.fineSize, args.picked_content_mark, args.picked_style_mark, args.synthesis)
+dataset = Dataset(contentPath, stylePath, args.texturePath, args.content_size, args.style_size,
+    args.picked_content_mark, args.picked_style_mark, args.synthesis)
 loader = torch.utils.data.DataLoader(dataset=dataset,
                                      batch_size=1,
                                      shuffle=False)
