@@ -79,7 +79,7 @@ CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen -
 CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_percep 0.01 --stage 2 -p wct_sd_stage2 --SE <SE path>
 CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_percep 0.01 --stage 1 -p wct_sd_stage1 --SE <SE path>
 ```
-- `<SE path>` is to specify the small encoder model trained in Step 2. A path example for stage5 is `Experiments/*wct_se_stage5*/weights/*.pth`
+- `<SE path>` is to specify the small encoder model trained in Step 3. A path example for stage5 is `Experiments/*wct_se_stage5*/weights/*.pth`
 
 ## Results
 <center><img src="PytorchWCT/style/UHD_style/Vincent_2K.png" width="400" hspace="10"></center>
