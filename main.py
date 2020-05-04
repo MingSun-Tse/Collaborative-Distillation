@@ -20,7 +20,7 @@ import torchvision.transforms as transforms
 # my libs
 from data_loader import Dataset, ContentStylePair
 from model.model import TrainSE_With_WCTDecoder, TrainSD_With_WCTSE
-from utils import LogPrint, set_up_dir, get_CodeID, LogHub
+from utils import LogPrint, set_up_dir, get_CodeID, LogHub, check_path
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
@@ -76,7 +76,8 @@ if __name__ == "__main__":
     if args.pretrained_init:
         args.SD = "trained_models/small16x_ae_base/d%d_base.pth" % args.stage
     net = TrainSD_With_WCTSE(args).cuda()
-    net.SE.load_state_dict(torch.load(args.SE)["model"])
+    SE_path = check_path(args.SE)
+    net.SE.load_state_dict(torch.load(SE_path)["model"])
     dataset = Dataset(args.content_train, args.shorter_side)
     train_loader = torch.utils.data.DataLoader(dataset=dataset, batch_size=args.batch_size, shuffle=True)
 
