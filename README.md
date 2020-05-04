@@ -1,7 +1,8 @@
 # Collaborative-Distillation
-Official PyTorch code for our CVPR-20 poster paper "Collaborative Distillation for Ultra-Resolution Universal Style Transfer". [[Arxiv](https://arxiv.org/abs/2003.08436)]
-> TL'DR: We propose a new knowledge distillation method to reduce CNN filters, realizing the ultra-resolution universal style transfer on a single 12GB GPU.
+Official PyTorch code for our CVPR-20 poster paper "[Collaborative Distillation for Ultra-Resolution Universal Style Transfer](https://arxiv.org/abs/2003.08436)", where we propose a new knowledge distillation method to reduce VGG-19 filters, realizing the ultra-resolution universal style transfer on a single 12GB GPU. We focus on model compression instead of new stylization schemes. For stylization, our method builds upon [WCT](https://papers.nips.cc/paper/6642-universal-style-transfer-via-feature-transforms.pdf).
+
 <center><img src="UHD_stylized.jpg" width="1000" hspace="10"></center>
+<center>One stylized sample of 10240 x 4096 pixels</center>
 
 ## Environment
 - python==3.6.9
@@ -17,7 +18,7 @@ Official PyTorch code for our CVPR-20 poster paper "Collaborative Distillation f
 > Image copyrights: We use the UHD images from [this wallpaper website](http://wallpaperswide.com/). All copyrights are attributed to them and thanks to them!
 
 **Step 2: Prepare models**
-- For original WCT: Download the unpruned [models](https://drive.google.com/file/d/0B8_MZ8a8aoSeWm9HSTdXNE9Eejg/view) (which are from the [official WCT implementation](https://github.com/Yijunmaverick/UniversalStyleTransfer)) and place them under `trained_models/original_wct_models`.
+- For original WCT: Download the unpruned [models](https://drive.google.com/file/d/0B8_MZ8a8aoSeWm9HSTdXNE9Eejg/view) (which are from the [official WCT implementation](https://github.com/Yijunmaverick/UniversalStyleTransfer)). Unzip and place them under `trained_models/original_wct_models`.
 - For ultra-resolution WCT: We use our pruned VGG-19. The models are already in the `trained_models/wct_se_16x_new` (for encoders) and `trained_models/wct_se_16x_new_sd` (for decoders).
 
 **Step 3: Stylization**
@@ -49,23 +50,27 @@ CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x --UHD --picked_content_m
 
 **Step 1: Prepare dataset**
 
-Download the MS-COCO 2014 training set and place it at ``.
+Download the [MS-COCO 2014 training set](http://cocodataset.org/#download) and unzip it at path `data/COCO/train2014`.
 
-**Step 2: Train the compressed encoders**
+**Step 2: Prepare models**
+- For training the SE (i.e., small encoder), we need the original decoder (a.k.a. big decoder or BD). We trained our own BD following the WCT paper. You can download them from [this google drive](https://drive.google.com/drive/folders/1qo2dv9bKJxS8xiThzp-PFe7ClHWS3Lhx?usp=sharing) and put them at path `trained_models/our_BD`.
+
+
+**Step 3: Train the compressed encoders**
 
 Under the root folder, run
 ```
-CUDA_VISIBLE_DEVICES=0 python train.py --stage 5 --speedup 16x --mode --se --project_name wct_se_stage5
+CUDA_VISIBLE_DEVICES=0 python train_small_encoder.py --mode wct --stage 5 --pretrained_init -p wct_se_stage5
 CUDA_VISIBLE_DEVICES=0 python train.py --stage 4 --speedup 16x --mode --se --project_name wct_se_stage4
 CUDA_VISIBLE_DEVICES=0 python train.py --stage 3 --speedup 16x --mode --se --project_name wct_se_stage3
 CUDA_VISIBLE_DEVICES=0 python train.py --stage 2 --speedup 16x --mode --se --project_name wct_se_stage2
 CUDA_VISIBLE_DEVICES=0 python train.py --stage 1 --speedup 16x --mode --se --project_name wct_se_stage1
 # Note: 
 ```
-- `--debug` is for printing the log to screen. You can remove it, then the log will be saved in the `Experiments` folder.
-- `--base` is to specify the base models we use for weight initialization to accelerate training, which are obtained by pruning the filters of the least L1-norms (see also [2017-ICLR-Filter Pruning](https://openreview.net/pdf?id=rJqFGTslg))
+- `--debug` is for printing the log to screen. You can remove it, then the log will be saved in a new-built project folder under `Experiments`.
+- `--base` is to specify the base models we employ for weight initialization to accelerate training, which are obtained by pruning the filters of the least L1-norms (see also [2017-ICLR-Filter Pruning](https://openreview.net/pdf?id=rJqFGTslg))
 
-**Step 3: Train the corresponding decoders**
+**Step 4: Train the corresponding decoders**
 
 ```
 CUDA_VISIBLE_DEVICES=0 python train.py --stage 5 --speedup 16x --mode --se 
