@@ -25,7 +25,7 @@ class LogPrint():
 def check_path(x):
     if x:
         complete_path = glob.glob(x)
-        assert(len(complete_path) == 1)
+        assert(len(complete_path) == 1), "The provided path points to more than 1 entity. Please check."
         x = complete_path[0]
     return x
 

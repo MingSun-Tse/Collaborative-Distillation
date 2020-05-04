@@ -60,30 +60,32 @@ Download the [MS-COCO 2014 training set](http://cocodataset.org/#download) and u
 
 Under the root folder, run
 ```
-CUDA_VISIBLE_DEVICES=0 python train_small_encoder.py --mode wct --stage 5 --pretrained_init -p wct_se_stage5
-CUDA_VISIBLE_DEVICES=0 python train.py --stage 4 --speedup 16x --mode --se --project_name wct_se_stage4
-CUDA_VISIBLE_DEVICES=0 python train.py --stage 3 --speedup 16x --mode --se --project_name wct_se_stage3
-CUDA_VISIBLE_DEVICES=0 python train.py --stage 2 --speedup 16x --mode --se --project_name wct_se_stage2
-CUDA_VISIBLE_DEVICES=0 python train.py --stage 1 --speedup 16x --mode --se --project_name wct_se_stage1
-# Note: 
+CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_se --pretrained_init --screen --stage 5 -p wct_se_stage5
+CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_se --pretrained_init --screen --stage 4 -p wct_se_stage4
+CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_se --pretrained_init --screen --stage 3 -p wct_se_stage3
+CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_se --pretrained_init --screen --stage 2 -p wct_se_stage2
+CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_se --pretrained_init --screen --stage 1 -p wct_se_stage1
 ```
-- `--debug` is for printing the log to screen. You can remove it, then the log will be saved in a new-built project folder under `Experiments`.
+- The log and trained models will be saved in a new-built project folder under `Experiments`.
 - `--base` is to specify the base models we employ for weight initialization to accelerate training, which are obtained by pruning the filters of the least L1-norms (see also [2017-ICLR-Filter Pruning](https://openreview.net/pdf?id=rJqFGTslg))
 
 **Step 4: Train the corresponding decoders**
 
 ```
-CUDA_VISIBLE_DEVICES=0 python train.py --stage 5 --speedup 16x --mode --se 
+CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_percep 0.01 --stage 5 -p wct_sd_stage5 --SE <SE path>
+CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_percep 0.01 --stage 4 -p wct_sd_stage4 --SE <SE path>
+CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_percep 0.01 --stage 3 -p wct_sd_stage3 --SE <SE path>
+CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_percep 0.01 --stage 2 -p wct_sd_stage2 --SE <SE path>
+CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen --lw_percep 0.01 --stage 1 -p wct_sd_stage1 --SE <SE path>
 ```
+- `<SE path>` is to specify the small encoder model trained in Step 2. A path example for stage5 is 'Experiments/*wct_se_stage5*/weights/*.pth'
 
 ## Results
-<img src="PytorchWCT/style/UHD_style/Vincent_2K.png" width="400" hspace="10">
+<center><img src="PytorchWCT/style/UHD_style/Vincent_2K.png" width="400" hspace="10"></center>
 
-<img src="PytorchWCT/content/UHD_content/green_park-wallpaper-3840x2160.jpg" width="400" hspace="10">
+<center><img src="PytorchWCT/content/UHD_content/green_park-wallpaper-3840x2160.jpg" width="400" hspace="10"></center>
 
-<img src="PytorchWCT/stylized_results/20181122-1715_1_green_park-wallpaper-3840x2160+Vincent_2K.jpg" width="400" hspace="10">
-
-[//]: # More results can be found in this folder.
+<center><img src="PytorchWCT/stylized_results/20181122-1715_1_green_park-wallpaper-3840x2160+Vincent_2K.jpg" width="400" hspace="10"></center>
 
 
 ### Acknowledgments
@@ -95,6 +97,6 @@ Please cite this in your publication if our work helps your research. Should you
     @inproceedings{wang2020collaborative,
       Author = {Wang, Huan and Li, Yijun and Wang, Yuehai and Hu, Haoji and Yang, Ming-Hsuan},
       Title = {Collaborative Distillation for Ultra-Resolution Universal Style Transfer},
-      Booktitle = {CVPR},
+      Booktitle = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
       Year = {2020}
     }
