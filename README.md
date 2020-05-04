@@ -1,48 +1,91 @@
-The code is being prepared, which will be updated soon. (04/11/2020)
-
 # Collaborative-Distillation
-Official PyTorch code for our CVPR-20 paper "Collaborative Distillation for Ultra-Resolution Universal Style Transfer". 
+Official PyTorch code for our CVPR-20 poster paper "Collaborative Distillation for Ultra-Resolution Universal Style Transfer". [[Arxiv](https://arxiv.org/abs/2003.08436)]
 > TL'DR: We propose a new knowledge distillation method to reduce CNN filters, realizing the ultra-resolution universal style transfer on a single 12GB GPU.
 <center><img src="UHD_stylized.jpg" width="1000" hspace="10"></center>
 
 ## Environment
 - python==3.6.9
-- pytorch==0.4.1
+- pytorch==0.4.1 (please do not use 1.x versions, since we will need the `load_lua` feature)
 - torchvision==0.2.1
 - CUDA + cuDNN
 
 ## Test (style transfer)
-Step 1: Prepare images
 
-Step 2: Prepare models
-- Download our trained unpruned encoder and decoder [models](https://drive.google.com/file/d/1REga1z1rKezQtBebIZ86_iNR-mxum-KB/view?usp=sharing) for image reconstruction only (download and uncompress them under `models/`)
-- For ultra-resolution style transfer, we use the pruned VGG-19. The models are already in the `PytorchWCT/models/16x_models`.
+**Step 1: Prepare images**
+- Contents are placed in `PytorchWCT/content`, where ultra-res contents are placed in `PytorchWCT/content/UHD_content`. Same path setting for the styles. 
+- Since the ultra-res images can be quite large, we only place two samples in this repo. For more ultra-res contents and styles presented in our paper, please download them from this [google drive](https://drive.google.com/drive/folders/12gGM0yszAVrcN6owf6P4XbVYgyLhW8Vf?usp=sharing).
+> Image copyrights: We use the UHD images from [this wallpaper website](http://wallpaperswide.com/). All copyrights are attributed to them and thanks to them!
 
-Step 3: Stylization
+**Step 2: Prepare models**
+- For original WCT: Download the unpruned [models](https://drive.google.com/file/d/0B8_MZ8a8aoSeWm9HSTdXNE9Eejg/view) (which are from the [official WCT implementation](https://github.com/Yijunmaverick/UniversalStyleTransfer)) and place them under `trained_models/original_wct_models`.
+- For ultra-resolution WCT: We use our pruned VGG-19. The models are already in the `trained_models/wct_se_16x_new` (for encoders) and `trained_models/wct_se_16x_new_sd` (for decoders).
+
+**Step 3: Stylization**
+
+Under the `PytorchWCT` folder, please run the following scripts. The stylized results will be saved in `PytorchWCT/stylized_results`.
 ```
-python WCT.py --cuda --gpu 0 --debug # use original VGG-19
-python WCT.py --cuda --gpu 0 --debug  -m 16x # use slimmed VGG-19
+# use original VGG-19, normal images
+CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode original
+
+# use original VGG-19, ultra-res images
+CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode original --UHD
+
+# use our pruned VGG-19, normal images
+CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x
+
+# use our pruned VGG-19, ultra-res images
+CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x --UHD
+
+# if your gpu ram cannot afford some very large content, try to test at a lower resolution, say
+CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x --UHD --content_size 3000
+```
+
+In default, the above scripts will test all possible content-style combinations (i.e., for 3 contents with 4 styles, there will be 3x4 stylzed results). If you only want to test a specific pair, say, content "green_park-wallpaper-3840x2160.jpg" with style "Vincent_2K.jpg",  you can use the option `--picked_content_mark` and `--picked_style_mark` to select specific pairs. E.g., the following will only choose the content whose name includes "green_park" and the style whose name includes "Vincent".
+```
+CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x --UHD --picked_content_mark green_park --picked_style_mark Vincent
 ```
 
 ## Train (model compressiom)
-> TODO
+
+**Step 1: Prepare dataset**
+
+Download the MS-COCO 2014 training set and place it at ``.
+
+**Step 2: Train the compressed encoders**
+
+Under the root folder, run
+```
+CUDA_VISIBLE_DEVICES=0 python train.py --stage 5 --speedup 16x --mode --se --project_name wct_se_stage5
+CUDA_VISIBLE_DEVICES=0 python train.py --stage 4 --speedup 16x --mode --se --project_name wct_se_stage4
+CUDA_VISIBLE_DEVICES=0 python train.py --stage 3 --speedup 16x --mode --se --project_name wct_se_stage3
+CUDA_VISIBLE_DEVICES=0 python train.py --stage 2 --speedup 16x --mode --se --project_name wct_se_stage2
+CUDA_VISIBLE_DEVICES=0 python train.py --stage 1 --speedup 16x --mode --se --project_name wct_se_stage1
+# Note: 
+```
+- `--debug` is for printing the log to screen. You can remove it, then the log will be saved in the `Experiments` folder.
+- `--base` is to specify the base models we use for weight initialization to accelerate training, which are obtained by pruning the filters of the least L1-norms (see also [2017-ICLR-Filter Pruning](https://openreview.net/pdf?id=rJqFGTslg))
+
+**Step 3: Train the corresponding decoders**
+
+```
+CUDA_VISIBLE_DEVICES=0 python train.py --stage 5 --speedup 16x --mode --se 
+```
 
 ## Results
 <img src="PytorchWCT/style/UHD_style/Vincent_2K.png" width="400" hspace="10">
 
 <img src="PytorchWCT/content/UHD_content/green_park-wallpaper-3840x2160.jpg" width="400" hspace="10">
 
-<img src="stylized_results/20181122-1715_1_green_park-wallpaper-3840x2160+Vincent_2K.jpg" width="400" hspace="10">
+<img src="PytorchWCT/stylized_results/20181122-1715_1_green_park-wallpaper-3840x2160+Vincent_2K.jpg" width="400" hspace="10">
 
 [//]: # More results can be found in this folder.
 
-Image copyrights: We use the UHD images from [this wallpaper website](http://wallpaperswide.com/). All copyrights are attributed to them.
 
 ### Acknowledgments
-In this code we refers to the following implementations: [PytorchWCT](https://github.com/sunshineatnoon/PytorchWCT), [pytorch-AdaIN](https://github.com/naoto0804/pytorch-AdaIN), [AdaIN-style](https://github.com/xunhuang1995/AdaIN-style). Great thanks to them!
+In this code we refer to the following implementations: [PytorchWCT](https://github.com/sunshineatnoon/PytorchWCT), [UniversalStyleTransfer](https://github.com/Yijunmaverick/UniversalStyleTransfer), [pytorch-AdaIN](https://github.com/naoto0804/pytorch-AdaIN), [AdaIN-style](https://github.com/xunhuang1995/AdaIN-style). Great thanks to them!
 
 ### Reference
-Please cite this in your publications if the code helps your research:
+Please cite this in your publication if our work helps your research. Should you have any questions, welcome to reach out to Huan Wang (wang.huan@northeastern.edu).
 
     @inproceedings{wang2020collaborative,
       Author = {Wang, Huan and Li, Yijun and Wang, Yuehai and Hu, Haoji and Yang, Ming-Hsuan},

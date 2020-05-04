@@ -67,7 +67,10 @@ def get_previous_step(e2, resume):
 
 def set_up_dir(project_name, resume, debug):
     TimeID = time.strftime("%Y%m%d-%H%M%S")
-    ExpID = "SERVER" + os.environ["SERVER"] + "-" + TimeID
+    if "SERVER" in os.environ.keys():
+        ExpID = "SERVER" + os.environ["SERVER"] + "-" + TimeID
+    else:
+        ExpID = TimeID
     if not debug:
         assert(project_name != "")  # For a formal exp, name it!
         project_path = pjoin("Experiments", ExpID + "_" + project_name)
@@ -84,7 +87,7 @@ def set_up_dir(project_name, resume, debug):
         if not os.path.exists(rec_img_path):
             os.makedirs(rec_img_path)
         log = sys.stdout  # print to the screen
-    print(" ".join(["CUDA_VISIBLE_DEVICES='0' python", *sys.argv]),
+    print(" ".join(["CUDA_VISIBLE_DEVICES=0 python", *sys.argv]),
           file=log, flush=True)  # save the script
     return TimeID, ExpID, rec_img_path, weights_path, log
 

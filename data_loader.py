@@ -6,7 +6,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 import torchvision.transforms as transforms
 import os
 import numpy as np
-from my_utils import is_img
+from utils import is_img
 
 class Dataset_npy(data.Dataset):
   def __init__(self, img_dir):
@@ -24,7 +24,7 @@ class Dataset_npy(data.Dataset):
     return len(self.img_list)
     
 class Dataset(data.Dataset):
-  def __init__(self, img_dir, shorter_side, transform=None):
+  def __init__(self, img_dir, shorter_side):
     self.img_list = [os.path.join(img_dir, i) for i in os.listdir(img_dir) if is_img(i)]
     self.shorter_side = shorter_side
 
@@ -48,7 +48,7 @@ class Dataset(data.Dataset):
     return len(self.img_list)
 
 class TestDataset(data.Dataset):
-  def __init__(self, img_dir, shorter_side, transform=None):
+  def __init__(self, img_dir, shorter_side):
     self.img_list = [os.path.join(img_dir, i) for i in os.listdir(img_dir) if is_img(i)]
     random_order = np.random.permutation(len(self.img_list))
     self.img_list = list(np.array(self.img_list)[random_order])
@@ -91,7 +91,7 @@ class ContentStylePair(data.Dataset):
         newh = self.shorter_side
         neww = int(w * newh / h)
       imgC = imgC.resize((neww, newh))
-      imgC = transforms.RandomCrop(256)(imgC) # the real image size for training is 256!
+      imgC = transforms.RandomCrop(256)(imgC)
       imgC = transforms.RandomHorizontalFlip()(imgC)
       imgC = transforms.ToTensor()(imgC)
       # style
@@ -103,7 +103,7 @@ class ContentStylePair(data.Dataset):
         newh = self.shorter_side
         neww = int(w * newh / h)
       imgS = imgS.resize((neww, newh))
-      imgS = transforms.RandomCrop(256)(imgS) # the real image size for training is 256!
+      imgS = transforms.RandomCrop(256)(imgS)
       imgS = transforms.RandomHorizontalFlip()(imgS)
       imgS = transforms.ToTensor()(imgS)
     return imgC.squeeze(0), imgS.squeeze(0)

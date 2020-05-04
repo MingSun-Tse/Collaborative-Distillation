@@ -1,12 +1,11 @@
 from __future__ import print_function
-from my_utils import LogPrint, set_up_dir, get_CodeID, LogHub, smart_load
+from utils import LogPrint, set_up_dir, get_CodeID, LogHub, smart_load
 from model import TrainSE_With_AdaINDecoder, TrainSE_With_WCTDecoder, TrainSD_With_WCTSE, TrainSD_With_FPSE, Train_SE_SD_Jointly_WCT
 from model import TrainSD_With_WCTSE_KDtoSD, TrainBD
 from data_loader import TestDataset, is_img
 from data_loader import Dataset, Dataset_npy
 import torchvision.transforms as transforms
 import torchvision.utils as vutils
-import torchvision
 import torch.utils.data as Data
 from torch.utils.serialization import load_lua
 import torch.nn as nn
@@ -23,7 +22,6 @@ import os
 import glob
 import pickle
 pjoin = os.path.join
-matplotlib.use("Agg")
 
 '''
 This file is to improve the method based on the idea "involving NST into the compression process directly".
