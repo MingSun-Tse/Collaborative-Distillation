@@ -33,7 +33,7 @@ class Dataset(data.Dataset):
         style_imgs   = [x for x in listdir(stylePath)   if is_image_file(x) and picked_style_mark   in x]
         pairs = [[c, s] for c in content_imgs for s in style_imgs]
         self.content_image_list = list(np.array(pairs)[:, 0])
-        self.style_image_list   = list(np.array(pairs)[:, 1])
+        self.style_image_list = list(np.array(pairs)[:, 1])
       
       # self.normalize = transforms.Normalize(mean=[103.939,116.779,123.68],std=[1, 1, 1])
       # normalize = transforms.Normalize(mean=[123.68,103.939,116.779],std=[1, 1, 1])
@@ -50,11 +50,11 @@ class Dataset(data.Dataset):
         contentImg = default_loader(contentImgPath)
         styleImg = default_loader(styleImgPath)
         if self.content_size:
-          contentImg = contentImg.resize(self.content_size)
+          contentImg = transforms.Resize(self.content_size)(contentImg)
         if self.style_size:
-          styleImg = styleImg.resize(self.style_size)
+          styleImg = transforms.Resize(self.style_size)(styleImg)
         contentImg = transforms.ToTensor()(contentImg)
-        styleImg   = transforms.ToTensor()(styleImg)
+        styleImg = transforms.ToTensor()(styleImg)
         return contentImg.squeeze(0), styleImg.squeeze(0), \
                self.content_image_list[index].split(".")[0] + "+" + self.style_image_list[index].split(".")[0] + ".jpg"
       

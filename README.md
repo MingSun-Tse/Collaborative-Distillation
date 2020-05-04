@@ -37,7 +37,7 @@ CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x
 # use our pruned VGG-19, ultra-res images
 CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x --UHD
 
-# you can change the content and style size via '--content_size' and '--style_size'
+# If your RAM cannot afford some large images, you can change the content and style size via '--content_size' and '--style_size'
 CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x --UHD --content_size 3000 --style_size 2000
 ```
 

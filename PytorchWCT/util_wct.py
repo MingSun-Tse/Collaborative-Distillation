@@ -14,12 +14,8 @@ from model.model_original import Encoder1, Encoder2, Encoder3, Encoder4, Encoder
 from model.model_original import Decoder1, Decoder2, Decoder3, Decoder4, Decoder5
 
 # 16x model
-from model.model_16x import SmallEncoder1_16x_aux, SmallEncoder2_16x_aux, SmallEncoder3_16x_aux, SmallEncoder4_16x_aux, SmallEncoder5_16x_aux
-from model.model_16x import SmallDecoder1_16x,     SmallDecoder2_16x,     SmallDecoder3_16x,     SmallDecoder4_16x,     SmallDecoder5_16x
-
-# fp16x model
-from model.model_fp16x import SmallEncoder5_FP16x, SmallEncoder4_FP16x, SmallEncoder3_FP16x, SmallEncoder2_FP16x, SmallEncoder1_FP16x
-from model.model_fp16x import SmallDecoder5_FP16x, SmallDecoder4_FP16x, SmallDecoder3_FP16x, SmallDecoder2_FP16x, SmallDecoder1_FP16x
+from model.model_cd import SmallEncoder1_16x_aux, SmallEncoder2_16x_aux, SmallEncoder3_16x_aux, SmallEncoder4_16x_aux, SmallEncoder5_16x_aux
+from model.model_cd import SmallDecoder1_16x,     SmallDecoder2_16x,     SmallDecoder3_16x,     SmallDecoder4_16x,     SmallDecoder5_16x
 
 # 16x model kd2sd (apply kd to the small decoder)
 from model.model_kd2sd import SmallDecoder1_16x_aux, SmallDecoder2_16x_aux, SmallDecoder3_16x_aux, SmallDecoder4_16x_aux, SmallDecoder5_16x_aux
@@ -44,7 +40,7 @@ class WCT(nn.Module):
             self.e4 = Encoder4(args.e4); self.d4 = Decoder4(args.d4)
             self.e5 = Encoder5(args.e5); self.d5 = Decoder5(args.d5)
        
-        elif args.mode in ["16x", "scratch"]:
+        elif args.mode == "16x":
             self.e5 = SmallEncoder5_16x_aux(args.e5); self.d5 = SmallDecoder5_16x(args.d5)
             self.e4 = SmallEncoder4_16x_aux(args.e4); self.d4 = SmallDecoder4_16x(args.d4)
             self.e3 = SmallEncoder3_16x_aux(args.e3); self.d3 = SmallDecoder3_16x(args.d3)
@@ -58,15 +54,8 @@ class WCT(nn.Module):
             self.e2 = SmallEncoder2_16x_aux(args.e2); self.d2 = SmallDecoder2_16x_aux(args.d2)
             self.e1 = SmallEncoder1_16x_aux(args.e1); self.d1 = SmallDecoder1_16x_aux(args.d1)
         
-        elif args.mode.lower() == "fp16x":
-            self.e5 = SmallEncoder5_FP16x(args.e5); self.d5 = SmallDecoder5_FP16x(args.d5)
-            self.e4 = SmallEncoder4_FP16x(args.e4); self.d4 = SmallDecoder4_FP16x(args.d4)
-            self.e3 = SmallEncoder3_FP16x(args.e3); self.d3 = SmallDecoder3_FP16x(args.d3)
-            self.e2 = SmallEncoder2_FP16x(args.e2); self.d2 = SmallDecoder2_FP16x(args.d2)
-            self.e1 = SmallEncoder1_FP16x(args.e1); self.d1 = SmallDecoder1_FP16x(args.d1)
-        
         else:
-            # print("Wrong mode. Please check.")
+            print("Wrong mode. Please check.")
             exit(1)
     
     # WCT with torch matrix multiplication
