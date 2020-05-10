@@ -18,7 +18,7 @@ Official PyTorch code for our CVPR-20 poster paper "[Collaborative Distillation 
 > Image copyrights: We use the UHD images from [this wallpaper website](http://wallpaperswide.com/). All copyrights are attributed to them and thanks to them!
 
 **Step 2: Prepare models**
-- For original WCT: Download the unpruned [models](https://drive.google.com/file/d/0B8_MZ8a8aoSeWm9HSTdXNE9Eejg/view) (which are from the [official WCT implementation](https://github.com/Yijunmaverick/UniversalStyleTransfer)). Unzip and place them under `trained_models/original_wct_models`.
+- For original WCT: Download the unpruned [models](https://drive.google.com/file/d/1hTjYEWG63vRuVlCMA6l_ArnBhwgfWisV/view?usp=sharing) (which are from the [official WCT implementation](https://github.com/Yijunmaverick/UniversalStyleTransfer)). Unzip and place them under `trained_models/original_wct_models`.
 - For ultra-resolution WCT: We use our pruned VGG-19. The models are already in the `trained_models/wct_se_16x_new` (for encoders) and `trained_models/wct_se_16x_new_sd` (for decoders).
 
 **Step 3: Stylization**
@@ -86,7 +86,7 @@ CUDA_VISIBLE_DEVICES=0 python main.py --mode wct_sd --pretrained_init --screen -
 
 <center><img src="PytorchWCT/content/UHD_content/green_park-wallpaper-3840x2160.jpg" width="400" hspace="10"></center>
 
-<center><img src="PytorchWCT/stylized_results/20181122-1715_1_green_park-wallpaper-3840x2160+Vincent_2K.jpg" width="400" hspace="10"></center>
+<center><img src="PytorchWCT/stylized_results/green_park-wallpaper-3840x2160+Vincent_2K.jpg" width="400" hspace="10"></center>
 
 
 ### Acknowledgments
