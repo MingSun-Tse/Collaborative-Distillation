@@ -46,7 +46,7 @@ In default, the above scripts will test all possible content-style combinations 
 CUDA_VISIBLE_DEVICES=0 python WCT.py --debug --mode 16x --UHD --picked_content_mark green_park --picked_style_mark Vincent
 ```
 
-## Train (model compressiom)
+## Train (model compression)
 
 **Step 1: Prepare dataset**
 
