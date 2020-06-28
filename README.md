@@ -5,7 +5,7 @@ Official PyTorch code for our CVPR-20 poster paper "[Collaborative Distillation 
 <center>One stylized sample of 10240 x 4096 pixels</center>
 
 ## Environment
-- python==3.6.9
+- python==3.6.9 (conda to manage environment is suggested)
 - The needed libraries are summarized in `requirements.txt`. Simply install them by `pip install -r requirements`
 - CUDA + cuDNN
 
