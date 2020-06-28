@@ -6,8 +6,7 @@ Official PyTorch code for our CVPR-20 poster paper "[Collaborative Distillation 
 
 ## Environment
 - python==3.6.9
-- pytorch==0.4.1 (please do not use 1.x versions, since we will need the `load_lua` feature)
-- torchvision==0.2.1
+- The needed libraries are summarized in `requirements.txt`. Simply install them by `pip install -r requirements`
 - CUDA + cuDNN
 
 ## Test (style transfer)
