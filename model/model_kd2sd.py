@@ -2,7 +2,7 @@ import numpy as np
 import os
 import torch.nn as nn
 import torch
-from torch.utils.serialization import load_lua
+# from torch.utils.serialization import load_lua
 from utils import load_param_from_t7 as load_param
 import pickle
 pjoin = os.path.join

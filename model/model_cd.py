@@ -2,7 +2,7 @@ import numpy as np
 import os
 import torch.nn as nn
 import torch
-from torch.utils.serialization import load_lua
+# from torch.utils.serialization import load_lua
 from utils import load_param_from_t7 as load_param
 from model.model_kd2sd import SmallDecoder1_16x_aux, SmallDecoder2_16x_aux, SmallDecoder3_16x_aux, SmallDecoder4_16x_aux, SmallDecoder5_16x_aux
 import pickle

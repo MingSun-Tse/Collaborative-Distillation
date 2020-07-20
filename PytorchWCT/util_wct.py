@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from torch.utils.serialization import load_lua
+# from torch.utils.serialization import load_lua
 import torchvision.transforms as transforms
 import argparse
 import time
@@ -10,8 +10,8 @@ from numpy import linalg
 import numpy as np
 
 # original model (unpruned vgg-19)
-from model.model_original import Encoder1, Encoder2, Encoder3, Encoder4, Encoder5
-from model.model_original import Decoder1, Decoder2, Decoder3, Decoder4, Decoder5
+# from model.model_original import Encoder1, Encoder2, Encoder3, Encoder4, Encoder5
+# from model.model_original import Decoder1, Decoder2, Decoder3, Decoder4, Decoder5
 
 # 16x model
 from model.model_cd import SmallEncoder1_16x_aux, SmallEncoder2_16x_aux, SmallEncoder3_16x_aux, SmallEncoder4_16x_aux, SmallEncoder5_16x_aux
@@ -33,14 +33,14 @@ class WCT(nn.Module):
         self.args = args
 
         # load pre-trained models
-        if args.mode == None or args.mode == "original":
-            self.e1 = Encoder1(args.e1); self.d1 = Decoder1(args.d1)
-            self.e2 = Encoder2(args.e2); self.d2 = Decoder2(args.d2)
-            self.e3 = Encoder3(args.e3); self.d3 = Decoder3(args.d3)
-            self.e4 = Encoder4(args.e4); self.d4 = Decoder4(args.d4)
-            self.e5 = Encoder5(args.e5); self.d5 = Decoder5(args.d5)
-       
-        elif args.mode == "16x":
+        # if args.mode == None or args.mode == "original":
+        #     self.e1 = Encoder1(args.e1); self.d1 = Decoder1(args.d1)
+        #     self.e2 = Encoder2(args.e2); self.d2 = Decoder2(args.d2)
+        #     self.e3 = Encoder3(args.e3); self.d3 = Decoder3(args.d3)
+        #     self.e4 = Encoder4(args.e4); self.d4 = Decoder4(args.d4)
+        #     self.e5 = Encoder5(args.e5); self.d5 = Decoder5(args.d5)
+
+        if args.mode == "16x":
             self.e5 = SmallEncoder5_16x_aux(args.e5); self.d5 = SmallDecoder5_16x(args.d5)
             self.e4 = SmallEncoder4_16x_aux(args.e4); self.d4 = SmallDecoder4_16x(args.d4)
             self.e3 = SmallEncoder3_16x_aux(args.e3); self.d3 = SmallDecoder3_16x(args.d3)
@@ -218,6 +218,7 @@ class WCT(nn.Module):
         targetFeature = targetFeature.view_as(cF)
         ccsF = alpha * targetFeature + (1.0 - alpha) * cF
         ccsF = ccsF.float().unsqueeze(0)
-        csF.data.resize_(ccsF.size()).copy_(ccsF)
-        torch.cuda.empty_cache()
+        with torch.no_grad():
+            csF.resize_(ccsF.size()).copy_(ccsF)
+            torch.cuda.empty_cache()
         return csF
