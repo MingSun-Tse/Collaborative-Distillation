@@ -32,6 +32,10 @@ class WCT(nn.Module):
         super(WCT, self).__init__()
         self.args = args
 
+        # NOTE: Since torch>=1.0 does not support `load_lua`, 
+        # comment out load_lua.
+        # https://github.com/pytorch/pytorch/issues/15307
+
         # load pre-trained models
         # if args.mode == None or args.mode == "original":
         #     self.e1 = Encoder1(args.e1); self.d1 = Decoder1(args.d1)
