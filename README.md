@@ -5,9 +5,15 @@ Official PyTorch code for our CVPR-20 poster paper "[Collaborative Distillation 
 <center>One stylized sample of 10240 x 4096 pixels</center>
 
 ## Environment
+- OS: Linux (Ubuntu 1404 and 1604 checked. It should be all right for most linux platforms. Windows and MacOS not checked.)
 - python==3.6.9 (conda to manage environment is suggested)
 - The needed libraries are summarized in `requirements.txt`. Simply install them by `pip install -r requirements`
-- CUDA + cuDNN
+- CUDA (cuDNN is not necessary)
+
+After the installlations, download the code:
+```
+git clone https://github.com/MingSun-Tse/Collaborative-Distillation.git
+```
 
 ## Test (style transfer)
 
