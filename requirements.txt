@@ -1,4 +1,4 @@
-scipy==1.4.1
+scipy==1.10.0
 torchvision==0.2.1
 torch==0.4.1
 matplotlib==3.1.3
